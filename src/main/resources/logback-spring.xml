@@ -1,0 +1,27 @@
+<configuration>
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+      <providers>
+        <timestamp/>
+        <pattern>
+          <pattern>
+            {
+              "service":"file-upload",
+              "level":"%level",
+              "thread":"%thread",
+              "logger":"%logger",
+              "traceId":"%X{traceId:-}",
+              "spanId":"%X{spanId:-}",
+              "message":"%message"
+            }
+          </pattern>
+        </pattern>
+        <stackTrace/>
+      </providers>
+    </encoder>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+  </root>
+</configuration>

@@ -1,0 +1,64 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: db_postgres
+    environment:
+      POSTGRES_USER: fabiano
+      POSTGRES_PASSWORD: senha123
+      POSTGRES_DB: treinamento
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: file-upload-download
+    depends_on:
+      - postgres
+      - jaeger
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/treinamento
+      - SPRING_DATASOURCE_USERNAME=fabiano
+      - SPRING_DATASOURCE_PASSWORD=senha123
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - MANAGEMENT_TRACING_ENABLED=true
+      - MANAGEMENT_TRACING_SAMPLING_PROBABILITY=1.0
+    volumes:
+      - ./uploads:/app/uploads
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.47
+    container_name: jaeger
+    ports:
+      - "16686:16686"   # UI web
+      - "4317:4317"     # OTLP endpoint
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "14250:14250"
+
+volumes:
+  pgdata:
