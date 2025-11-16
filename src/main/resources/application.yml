@@ -1,8 +1,26 @@
+---
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/treinamento
+    username: fabiano
+    password: senha123
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+logging:
+  level:
+    root: INFO
 management:
   tracing:
     enabled: true
     sampling:
-      probability: 1.0
+      probability: 1
   metrics:
     export:
       prometheus:

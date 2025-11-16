@@ -20,7 +20,7 @@ services:
       - postgres
       - jaeger
     ports:
-      - "8080:8080"
+      - "8081:8081"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/treinamento
       - SPRING_DATASOURCE_USERNAME=fabiano
